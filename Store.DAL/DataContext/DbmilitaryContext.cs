@@ -34,7 +34,7 @@ public partial class DbmilitaryContext : IdentityDbContext<ApplicationUser, Iden
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json").Build();
 
-        if (!optionsBuilder.IsConfigured)
+        if (optionsBuilder.IsConfigured)
         {
             optionsBuilder.UseSqlServer(configBuilder.GetConnectionString("MyConnectionString"));
         }

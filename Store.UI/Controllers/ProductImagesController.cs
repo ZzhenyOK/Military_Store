@@ -11,7 +11,6 @@ using Store.DAL.Models;
 
 namespace Store.UI.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class ProductImagesController : Controller
     {
         private readonly DbmilitaryContext _context;
@@ -24,7 +23,7 @@ namespace Store.UI.Controllers
         // GET: ProductImages
         public async Task<IActionResult> Index()
         {
-            var dbmilitaryContext = _context.ProductImages.Include(p => p.Product);
+            var dbmilitaryContext = _context.ProductImages;
             return View(await dbmilitaryContext.ToListAsync());
         }
 

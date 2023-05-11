@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using Store.DAL.DataContext;
@@ -11,7 +12,6 @@ using Store.DAL.Models;
 
 namespace Store.UI.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class ProductsController : Controller
     {
         private readonly DbmilitaryContext _context;
@@ -24,7 +24,7 @@ namespace Store.UI.Controllers
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            var dbmilitaryContext = _context.Products.Include(p => p.Category);
+            var dbmilitaryContext = _context.Products;
             return View(await dbmilitaryContext.ToListAsync());
         }
 
@@ -36,9 +36,7 @@ namespace Store.UI.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = await _context.Products.FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
                 return NotFound();
@@ -61,12 +59,13 @@ namespace Store.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,CategoryId,Title,Price,Rate,Desctiption")] Product product)
         {
-            if (ModelState.IsValid)
-            {
+            //if (ModelState.IsValid)
+            //{
                 _context.Add(product);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
-            }
+            //}
+
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", product.CategoryId);
             return View(product);
         }
@@ -100,8 +99,8 @@ namespace Store.UI.Controllers
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
-            {
+            //if (ModelState.IsValid)
+            //{
                 try
                 {
                     _context.Update(product);
@@ -116,10 +115,10 @@ namespace Store.UI.Controllers
                     else
                     {
                         throw;
-                    }
+                    }                   
                 }
                 return RedirectToAction(nameof(Index));
-            }
+            //}
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", product.CategoryId);
             return View(product);
         }
@@ -132,9 +131,7 @@ namespace Store.UI.Controllers
                 return NotFound();
             }
 
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var product = await _context.Products.FirstOrDefaultAsync(m => m.Id == id);
             if (product == null)
             {
                 return NotFound();

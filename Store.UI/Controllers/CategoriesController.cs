@@ -11,7 +11,6 @@ using Store.DAL.Models;
 
 namespace Store.UI.Controllers
 {
-    [Authorize(Roles = "Admin")]
     public class CategoriesController : Controller
     {
         private readonly DbmilitaryContext _context;
