@@ -45,16 +45,13 @@ namespace Store.UI.Controllers
             return View(product);
         }
 
-        // GET: Products/Create
+        [HttpGet]
         public IActionResult Create()
         {
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id");
             return View();
         }
 
-        // POST: Products/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,CategoryId,Title,Price,Rate,Desctiption")] Product product)
@@ -157,6 +154,34 @@ namespace Store.UI.Controllers
             
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AddImages()
+        {
+            ViewBag.Product = new SelectList(_context.Products, "Id", "Title");
+            return View();
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> AddImages(ProductImages pimage, List<IFormFile> Image)
+        {
+            if (Image == null) return View();
+            List<ProductImages> list = new List<ProductImages>();
+            foreach(var item in Image)
+            {
+                using(MemoryStream ms = new MemoryStream())
+                {                
+                    item.CopyTo(ms);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    ProductImages pi = new ProductImages { ProductId = pimage.ProductId, Image = ms.ToArray() };
+                    list.Add(pi);
+                }
+            }
+            _context.ProductImages.AddRange(list);
+            _context.SaveChanges();
+            return RedirectToAction(nameof(Index));  
         }
 
         private bool ProductExists(int id)

@@ -13,6 +13,19 @@ html {
   min-height: 100%;
 }
 
+
 body {
-  margin-bottom: 60px;
+    margin-bottom: 60px;
 }
+
+.bg {
+    overflow: hidden;
+    top: 10;
+    left: 0;
+    bottom: 100;
+
+     Preserve aspet ratio 
+    min-width: 100%;
+    min-height: 100%;
+}
+
