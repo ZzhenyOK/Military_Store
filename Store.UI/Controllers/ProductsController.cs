@@ -160,7 +160,7 @@ namespace Store.UI.Controllers
         public async Task<IActionResult> AddImages()
         {
             ViewBag.Product = new SelectList(_context.Products, "Id", "Title");
-            return View();
+            return  View();
         }
 
 
@@ -179,8 +179,8 @@ namespace Store.UI.Controllers
                     list.Add(pi);
                 }
             }
-            _context.ProductImages.AddRange(list);
-            _context.SaveChanges();
+            await _context.ProductImages.AddRangeAsync(list);
+            await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));  
         }
 

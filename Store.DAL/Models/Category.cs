@@ -5,10 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Store.DAL.Models;
 
-public partial class Category
+public partial class Category : BaseModel
 {
-    [Key]
-    public int Id { get; set; }
-
     public string? CategoryName { get; set; }
 }

@@ -8,13 +8,13 @@ using Store.DAL.Models;
 
 namespace Store.BLL.Services.Contracts
 {
-    public interface IService<T> where T : class
+    public interface IService<TModel> where TModel : class
     {
-        void Add(T t);
-        void Update(T t);
-        void Delete(T entity);
-        IEnumerable<T> GetAll();
-        T Get(int id);
-        void Save();
+        Task AddAsync(TModel t);
+        Task<TModel> UpdateAsync(TModel model);
+        Task DeleteAsync(TModel entity);
+        Task<IEnumerable<TModel>> GetAllAsync();
+        Task<TModel> GetByIdAsync(int id);
+        Task SaveAsync();
     }
 }

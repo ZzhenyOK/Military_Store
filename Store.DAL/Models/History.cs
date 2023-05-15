@@ -9,10 +9,8 @@ using System.Threading.Tasks;
 
 namespace Store.DAL.Models
 {
-    public class History
+    public class History : BaseModel
     {
-        [Key]
-        public int Id { get; set; }
         [ForeignKey("FK_Product_12")]
         public int ProductId { get; set; }
         [ForeignKey("FK_User_1")]

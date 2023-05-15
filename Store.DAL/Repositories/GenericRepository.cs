@@ -6,61 +6,57 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
+using Store.DAL.Models;
 
 namespace Store.DAL.Repositories
 {
-    public class GenericRepository<TModel> : IGenericRepository<TModel> where TModel : class
+    public class GenericRepository<TModel> : IGenericRepository<TModel> where TModel : BaseModel
     {
-        private readonly DbmilitaryContext _dbcontext;
+        private readonly DbmilitaryContext _context;
+        DbSet<TModel> entities;
         public GenericRepository(DbmilitaryContext dbmilitary)
         {
-            _dbcontext= dbmilitary;
+            _context= dbmilitary;
+            entities = _context.Set<TModel>();
         }
 
-        public void Add(TModel t)
+        public async Task<TModel> AddAsync(TModel model)
         {
-            _dbcontext.Set<TModel>().Add(t);
-            _dbcontext.SaveChanges();
+            if(model == null) return null;
+            await entities.AddAsync(model);
+            await _context.SaveChangesAsync();
+            return model;
         }
-
-        public void Delete(TModel entity)
+        public async Task<TModel> UpdateAsync(int id, TModel model)
         {
-            _dbcontext.Set<TModel>().Remove(entity);
-            _dbcontext.SaveChanges();
+            if(model == null) return null;
+            TModel item = await entities.FindAsync(id);
+            if (item == null) return null;
+            item = model;
+            item.Id = id;
+            _context.Entry(item).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+            return item;
         }
-
-        public IQueryable<TModel> FindBy(Expression<Func<TModel, bool>> predicate)
+        public async Task DeleteAsync(TModel entity)
         {
-            IQueryable<TModel> guery = _dbcontext.Set<TModel>().Where(predicate);
-            return guery;
+            TModel item = await entities.FindAsync(entity);
+            if (item == null) return;
+            entities.Remove(item);
+            await _context.SaveChangesAsync();
         }
-
-        public TModel GetById(int id)
+        public async Task<List<TModel>> GetAllAsync()
         {
-            return _dbcontext.Set<TModel>().Find(id);
+            return await entities.ToListAsync();
         }
-
-        public IQueryable<TModel> GetAll()
+        public async Task<TModel> GetByIdAsync(int id)
         {
-            return _dbcontext.Set<TModel>();
+            return await entities.FindAsync(id); 
         }
-
-        public void Save()
+        public async Task SaveAsync()
         {
-            _dbcontext.SaveChanges();
-        }
-
-        public TModel Update(TModel t)
-        {
-            if (t == null)
-                return null;
-            TModel exist = _dbcontext.Set<TModel>().Find(t);
-            if (exist != null)
-            {
-                _dbcontext.Entry(exist).CurrentValues.SetValues(t);
-                _dbcontext.SaveChanges();
-            }
-            return exist;
+            await _context.SaveChangesAsync();
         }
     }
 }

@@ -67,10 +67,10 @@ builder.Services.AddScoped<IService<HistoryDTO>, HistoryService>();
 builder.Services.AddScoped<IService<ProductDTO>, ProductService>();
 builder.Services.AddScoped<IService<ProductImagesDTO>, ProductImagesService>();
 
-builder.Services.AddTransient(typeof(IGenericRepository<Category>), typeof(GenericRepository<CategoryRepository>));
-builder.Services.AddTransient(typeof(IGenericRepository<Cart>), typeof(GenericRepository<CartRepository>));
-builder.Services.AddTransient(typeof(IGenericRepository<History>), typeof(GenericRepository<HistoryRepository>));
-builder.Services.AddTransient(typeof(IGenericRepository<Product>), typeof(GenericRepository<ProductRepository>));
-builder.Services.AddTransient(typeof(IGenericRepository<ProductImages>), typeof(GenericRepository<ProductImagesRepository>));
+builder.Services.AddTransient(typeof(IGenericRepository<Category>), typeof(GenericRepository<>));
+builder.Services.AddTransient(typeof(IGenericRepository<Cart>), typeof(GenericRepository<>));
+builder.Services.AddTransient(typeof(IGenericRepository<History>), typeof(GenericRepository<>));
+builder.Services.AddTransient(typeof(IGenericRepository<Product>), typeof(GenericRepository<>));
+builder.Services.AddTransient(typeof(IGenericRepository<ProductImages>), typeof(GenericRepository<>));
 
 

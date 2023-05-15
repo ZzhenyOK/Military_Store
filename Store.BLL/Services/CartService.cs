@@ -19,63 +19,88 @@ namespace Store.BLL.Services
             _repository = repository;
         }
 
-        public void Add(CartDTO cart)
+        public async Task AddAsync(CartDTO t)
         {
             Cart newCart = new Cart()
             {
-                Id = cart.Id,
-                UserId = cart.UserId,
-                ProductId = cart.ProductId,
+                Id = t.Id,
+                UserId = t.UserId,
+                ProductId = t.ProductId,
             };
-            _repository.Add(newCart);
-            _repository.Save();
+            await _repository.AddAsync(newCart);
+            await _repository.SaveAsync();
         }
 
-        public void Delete(CartDTO cart)
+        public async Task DeleteAsync(CartDTO entity)
         {
-            Cart delCart = _repository.GetById(cart.Id);
-            _repository.Delete(delCart);
-            _repository.Save();
-        }
-
-        public CartDTO Get(int id)
-        {
-            Cart cart = _repository.GetById(id);
-            CartDTO cartDTO = new CartDTO
+            Cart delCart = await _repository.GetByIdAsync(entity.Id);
+            if (delCart != null)
             {
-                Id = cart.Id,
-                UserId = cart.UserId,
-                ProductId= cart.ProductId
-            };
-            return cartDTO;
+                await _repository.DeleteAsync(delCart);
+                await _repository.SaveAsync();
+            }
         }
 
-        public IEnumerable<CartDTO> GetAll()
+        //public IEnumerable<CartDTO> GetAll()
+        //{
+        //    return _repository.GetAll()
+        //        .Select(x => new CartDTO
+        //        {
+        //            Id = x.Id,
+        //            UserId = x.UserId,
+        //            ProductId= x.ProductId
+        //        });
+        //}
+
+        public async Task<IEnumerable<CartDTO>> GetAllAsync()
         {
-            return _repository.GetAll()
-                .Select(x => new CartDTO
+            return (IEnumerable<CartDTO>)await _repository.GetAllAsync();
+        }
+
+        public async Task<CartDTO> GetByIdAsync(int id)
+        {
+            Cart cart = await _repository.GetByIdAsync(id);
+            if (cart != null)
+            {
+                CartDTO cartDTO = new CartDTO
                 {
-                    Id = x.Id,
-                    UserId = x.UserId,
-                    ProductId= x.ProductId
-                });
+                    Id = cart.Id,
+                    UserId = cart.UserId,
+                    ProductId = cart.ProductId
+                };
+                return cartDTO;
+            }
+            return null;
         }
 
-        public void Save()
+        public async Task SaveAsync()
         {
-            _repository.Save();
+            await _repository.SaveAsync();
         }
 
-        public void Update(CartDTO cart)
+        //public void Update(CartDTO cart)
+        //{
+        //    Cart newCart = _repository.GetById(cart.Id);
+        //    if (newCart != null)
+        //    {
+        //        newCart.Id = cart.Id;
+        //        newCart.UserId = cart.UserId;
+        //        newCart.ProductId = cart.ProductId;
+        //    }
+        //    _repository.Save();
+        //}
+
+        public async Task<CartDTO> UpdateAsync(CartDTO model)
         {
-            Cart newCart = _repository.GetById(cart.Id);
+            Cart newCart = await _repository.GetByIdAsync(model.Id);
             if (newCart != null)
             {
-                newCart.Id = cart.Id;
-                newCart.UserId = cart.UserId;
-                newCart.ProductId = cart.ProductId;
+                newCart.Id = model.Id;
+                newCart.UserId = model.UserId;
+                newCart.ProductId = model.ProductId;
             }
-            _repository.Save();
+            await _repository.SaveAsync();
+            return model;
         }
     }
 }

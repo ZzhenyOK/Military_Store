@@ -13,64 +13,65 @@ namespace Store.BLL.Services
     public class ProductImagesService : IService<ProductImagesDTO>
     {
         protected IGenericRepository<ProductImages> _repository;
-        public void Add(ProductImagesDTO productImages)
+
+        public async Task AddAsync(ProductImagesDTO t)
         {
             ProductImages newProductImages = new ProductImages
             {
-                Id = productImages.Id,
-                ProductId = productImages.ProductId,
-                Image = productImages.Image
+                Id = t.Id,
+                ProductId = t.ProductId,
+                Image = t.Image
             };
-            _repository.Add(newProductImages);
-            _repository.Save();
+            await _repository.AddAsync(newProductImages);
+            await _repository.SaveAsync();
         }
 
-        public void Delete(ProductImagesDTO entity)
+        public async Task DeleteAsync(ProductImagesDTO entity)
         {
-            ProductImages delProductImages = _repository.GetById(entity.Id);
+            ProductImages delProductImages = await _repository.GetByIdAsync(entity.Id);
             if (delProductImages != null)
             {
-                _repository.Delete(delProductImages);
+                await _repository.DeleteAsync(delProductImages); 
+                await _repository.SaveAsync();
             }
-            _repository.Save();
         }
 
-        public ProductImagesDTO Get(int id)
+        public async Task<IEnumerable<ProductImagesDTO>> GetAllAsync()
         {
-            ProductImages productImages = _repository.GetById(id);
-            return new ProductImagesDTO
+            return (IEnumerable<ProductImagesDTO>) await _repository.GetAllAsync();
+        }
+
+        public async Task<ProductImagesDTO> GetByIdAsync(int id)
+        {
+            ProductImages productImages = await _repository.GetByIdAsync(id);
+            if (productImages != null)
             {
-                Id = productImages.Id,
-                ProductId = productImages.ProductId,
-                Image = productImages.Image
-            };
-        }
-
-        public IEnumerable<ProductImagesDTO> GetAll()
-        {
-            return _repository.GetAll().Select(x => new ProductImagesDTO
-            {
-                Id = x.Id,
-                ProductId = x.ProductId,
-                Image = x.Image
-            });
-        }
-
-        public void Save()
-        {
-            _repository.Save();
-        }
-
-        public void Update(ProductImagesDTO productImages)
-        {
-            ProductImages newProductImages = _repository.GetById(productImages.Id);
-            if(newProductImages != null)
-            {
-                newProductImages.Id = productImages.Id;
-                newProductImages.ProductId = productImages.ProductId;
-                newProductImages.Image = productImages.Image;
+                return new ProductImagesDTO
+                {
+                    Id = productImages.Id,
+                    ProductId = productImages.ProductId,
+                    Image = productImages.Image
+                };
             }
-            _repository.Save();
+            return null;
+        }
+
+        public async Task SaveAsync()
+        {
+            await _repository.SaveAsync();
+        }
+
+        public async Task<ProductImagesDTO> UpdateAsync(ProductImagesDTO model)
+        {
+            ProductImages newProductImages = await _repository.GetByIdAsync(model.Id);
+            if (newProductImages != null)
+            {
+                newProductImages.Id = model.Id;
+                newProductImages.ProductId = model.ProductId;
+                newProductImages.Image = model.Image;
+            }
+            await _repository.SaveAsync();
+            return model;
         }
     }
 }

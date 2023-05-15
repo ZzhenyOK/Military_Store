@@ -9,10 +9,8 @@ using System.Threading.Tasks;
 
 namespace Store.DAL.Models
 {
-    public class Cart
+    public class Cart : BaseModel
     {
-        [Key]
-        public int Id { get; set; }
         [ForeignKey("FK_Product_123")]
         public int ProductId { get; set; }
         [ForeignKey("FK_User_12")]

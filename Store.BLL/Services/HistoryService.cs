@@ -13,72 +13,71 @@ namespace Store.BLL.Services
     public class HistoryService : IService<HistoryDTO>
     {
         protected IGenericRepository<History> _repository;
-        public void Add(HistoryDTO history)
+
+        public async Task AddAsync(HistoryDTO t)
         {
             History newHistory = new History()
             {
-                Id = history.Id,
-                ProductId = history.ProductId,
-                UserId = history.UserId,
-                Price = history.Price,
-                PurchaseDate = history.PurchaceDate
+                Id = t.Id,
+                ProductId = t.ProductId,
+                UserId = t.UserId,
+                Price = t.Price,
+                PurchaseDate = t.PurchaceDate
             };
-            _repository.Add(newHistory);
-            _repository.Save();
+            await _repository.AddAsync(newHistory);
+            await _repository.SaveAsync();
         }
 
-        public void Delete(HistoryDTO entity)
+        public async Task DeleteAsync(HistoryDTO entity)
         {
-            History delHistory = _repository.GetById(entity.Id);
+            History delHistory = await _repository.GetByIdAsync(entity.Id);
             if (delHistory != null)
             {
-                _repository.Delete(delHistory);
+               await _repository.DeleteAsync(delHistory);
+               await _repository.SaveAsync();
+            }     
+        }
+
+        public async Task<IEnumerable<HistoryDTO>> GetAllAsync()
+        {
+            return (IEnumerable<HistoryDTO>)await _repository.GetAllAsync();
+        }
+
+        public async Task<HistoryDTO> GetByIdAsync(int id)
+        {
+            History history = await _repository.GetByIdAsync(id);
+            if (history != null)
+            {
+                return new HistoryDTO
+                {
+                    Id = history.Id,
+                    ProductId = history.ProductId,
+                    UserId = history.UserId,
+                    Price = history.Price,
+                    PurchaceDate = history.PurchaseDate
+                };
             }
-            _repository.Save();
+            return null;
         }
 
-        public HistoryDTO Get(int id)
+        public async Task SaveAsync()
         {
-            History history = _repository.GetById(id);
-            return new HistoryDTO
-            {
-                Id = history.Id,
-                ProductId = history.ProductId,
-                UserId = history.UserId,
-                Price = history.Price,
-                PurchaceDate = history.PurchaseDate
-            };
+            await _repository.SaveAsync();
         }
 
-        public IEnumerable<HistoryDTO> GetAll()
+        public async Task<HistoryDTO> UpdateAsync(HistoryDTO model)
         {
-            return _repository.GetAll().Select(x => new HistoryDTO
-            {
-                Id = x.Id, 
-                ProductId = x.ProductId,
-                UserId = x.UserId,
-                Price = x.Price,
-                PurchaceDate = x.PurchaseDate
-            });
-        }
-
-        public void Save()
-        {
-            _repository.Save();
-        }
-
-        public void Update(HistoryDTO history)
-        {
-            History newHistory = _repository.GetById(history.Id);
+            History newHistory = await _repository.GetByIdAsync(model.Id);
             if (newHistory != null)
             {
-                newHistory.Id = history.Id;
-                newHistory.ProductId = history.ProductId;
-                newHistory.UserId = history.UserId;
-                newHistory.Price = history.Price;
-                newHistory.PurchaseDate = history.PurchaceDate;
+                newHistory.Id = model.Id;
+                newHistory.ProductId = model.ProductId;
+                newHistory.UserId = model.UserId;
+                newHistory.Price = model.Price;
+                newHistory.PurchaseDate = model.PurchaceDate;
             }
-            _repository.Save();
+            await _repository.SaveAsync();
+            return model;
         }
     }
 }

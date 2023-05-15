@@ -9,11 +9,8 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace Store.DAL.Models
 {
-    public partial class Product
+    public partial class Product : BaseModel
     {
-        [Key]
-        public int Id { get; set; }
-
         [ForeignKey("FK_Category_1")]
         public int CategoryId { get; set; }
         public string Title { get; set; }

@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Store.BLL.DTO
+namespace Store.DAL.Models
 {
-    public class CategoryDTO
+    public abstract class BaseModel
     {
+        [Key]
         public int Id { get; set; }
-        public string? CategoryName { get; set; }
     }
 }

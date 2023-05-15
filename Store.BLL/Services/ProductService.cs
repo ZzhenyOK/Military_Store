@@ -13,77 +13,76 @@ namespace Store.BLL.Services
     public class ProductService : IService<ProductDTO>
     {
         protected IGenericRepository<Product> _repository;
-        public void Add(ProductDTO product)
+
+        public async Task AddAsync(ProductDTO t)
         {
             Product newProduct = new Product()
             {
-                Id = product.Id,
-                CategoryId = product.CategoryId,
-                Title = product.Title,
-                Price = product.Price,
-                Rate = product.Rate,
-                Desctiption = product.Description
+                Id = t.Id,
+                CategoryId = t.CategoryId,
+                Title = t.Title,
+                Price = t.Price,
+                Rate = t.Rate,
+                Desctiption = t.Description
             };
-            _repository.Add(newProduct);
-            _repository.Save();
+            await _repository.AddAsync(newProduct);
+            await _repository.SaveAsync();
         }
 
-        public void Delete(ProductDTO entity)
+        public async Task DeleteAsync(ProductDTO entity)
         {
-            Product delProduct = _repository.GetById(entity.Id);
+            Product delProduct = await _repository.GetByIdAsync(entity.Id);
             if (delProduct != null)
             {
-                _repository.Delete(delProduct);
+                await _repository.DeleteAsync(delProduct);
             }
-            _repository.Save();
+            await _repository.SaveAsync();
         }
 
-        public ProductDTO Get(int id)
+        public async Task<IEnumerable<ProductDTO>> GetAllAsync()
         {
-            Product product = _repository.GetById(id);
-            return new ProductDTO
+            return (IEnumerable<ProductDTO>)await _repository.GetAllAsync();
+
+        }
+
+        public async Task<ProductDTO> GetByIdAsync(int id)
+        {
+            Product product = await _repository.GetByIdAsync(id);
+            if (product != null)
             {
-                Id = product.Id,
-                CategoryId = product.CategoryId,
-                Title = product.Title,
-                Price = product.Price,
-                Rate = product.Rate,
-                Description = product.Desctiption
+                return new ProductDTO
+                {
+                    Id = product.Id,
+                    CategoryId = product.CategoryId,
+                    Title = product.Title,
+                    Price = product.Price,
+                    Rate = product.Rate,
+                    Description = product.Desctiption
 
-            };
+                };
+            }
+            return null;
         }
 
-        public IEnumerable<ProductDTO> GetAll()
+        public async Task SaveAsync()
         {
-            return _repository.GetAll().Select(x => new ProductDTO
-            {
-                Id = x.Id,
-                CategoryId = x.CategoryId,
-                Title = x.Title,
-                Price = x.Price,
-                Rate = x.Rate,
-                Description = x.Desctiption
-            });
+            await _repository.SaveAsync();
         }
 
-        public void Save()
+        public async Task<ProductDTO> UpdateAsync(ProductDTO model)
         {
-            _repository.Save();
-        }
-
-        public void Update(ProductDTO product)
-        {
-            Product newProduct = _repository.GetById(product.Id);
+            Product newProduct = await _repository.GetByIdAsync(model.Id);
             if (newProduct != null)
             {
-                newProduct.Id = product.Id;
-                newProduct.CategoryId = product.CategoryId;
-                newProduct.Title = product.Title;
-                newProduct.Price = product.Price;
-                newProduct.Rate = product.Rate;
-                newProduct.Desctiption = product.Description;
+                newProduct.Id = model.Id;
+                newProduct.CategoryId = model.CategoryId;
+                newProduct.Title = model.Title;
+                newProduct.Price = model.Price;
+                newProduct.Rate = model.Rate;
+                newProduct.Desctiption = model.Description;
             }
-            _repository.Save();
+            await _repository.SaveAsync();
+            return model;
         }
     }
 }

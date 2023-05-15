@@ -9,14 +9,13 @@ using Store.DAL.Models;
 
 namespace Store.DAL.Repositories.Contracts
 {
-    public interface IGenericRepository<TModel> where TModel : class
+    public interface IGenericRepository<TModel> where TModel : BaseModel
     {
-        void Add(TModel t);
-        TModel Update(TModel t);
-        void Delete(TModel entity);
-        IQueryable<TModel> FindBy(Expression<Func<TModel, bool>> predicate);
-        IQueryable<TModel> GetAll();
-        TModel GetById(int id);
-        void Save();
+        Task<TModel> AddAsync(TModel t);
+        Task<TModel> UpdateAsync(int id, TModel model);
+        Task DeleteAsync(TModel entity);
+        Task<List<TModel>> GetAllAsync();
+        Task<TModel> GetByIdAsync(int id);
+        Task SaveAsync();
     }
 }
