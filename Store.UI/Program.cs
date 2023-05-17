@@ -1,9 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Store.DAL.DataContext;
-using Store.DAL.Repositories;
-using Store.DAL.Repositories.Contracts;
 using Store.BLL.Services;
-using Store.BLL.Services.Contracts;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Store.BLL.DTO;
@@ -16,6 +13,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using StackExchange.Redis;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Cors.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +23,12 @@ builder.Services.AddDbContext<DbmilitaryContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("MyConnectionString"));
 });
+
+//Services configuration
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IHistoryService, HistoryService>();
+builder.Services.AddScoped<IProductImagesService, ProductImagesService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
     .AddDefaultTokenProviders().AddRoles<IdentityRole<int>>()
@@ -60,17 +64,3 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 app.Run();
-
-builder.Services.AddScoped<IService<CategoryDTO>, CategoryService>();
-builder.Services.AddScoped<IService<CartDTO>, CartService>();
-builder.Services.AddScoped<IService<HistoryDTO>, HistoryService>();
-builder.Services.AddScoped<IService<ProductDTO>, ProductService>();
-builder.Services.AddScoped<IService<ProductImagesDTO>, ProductImagesService>();
-
-builder.Services.AddTransient(typeof(IGenericRepository<Category>), typeof(GenericRepository<>));
-builder.Services.AddTransient(typeof(IGenericRepository<Cart>), typeof(GenericRepository<>));
-builder.Services.AddTransient(typeof(IGenericRepository<History>), typeof(GenericRepository<>));
-builder.Services.AddTransient(typeof(IGenericRepository<Product>), typeof(GenericRepository<>));
-builder.Services.AddTransient(typeof(IGenericRepository<ProductImages>), typeof(GenericRepository<>));
-
-

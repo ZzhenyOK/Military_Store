@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Store.UI.Models;
 using System.Diagnostics;
-
-using Store.BLL.Services.Contracts;
 using Store.DAL.Models;
 using Microsoft.AspNetCore.Authorization;
 using Store.DAL.DataContext;

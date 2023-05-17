@@ -8,8 +8,10 @@ using System.Threading.Tasks;
 
 namespace Store.DAL.Models
 {
-    public class ProductImages : BaseModel
+    public class ProductImages : IBaseModel
     {
+        [Key]
+        public int Id { get; set; }
         [ForeignKey("FK_Product_1")]
         public int ProductId { get; set; }
         public byte[] Image { get; set; }
@@ -17,5 +19,6 @@ namespace Store.DAL.Models
         //virtual properties
         [NotMapped]
         public Product Product { get; set; }
+        
     }
 }
