@@ -17,7 +17,6 @@ namespace Store.DAL.Models
         public byte[] Image { get; set; }
 
         //virtual properties
-        [NotMapped]
         public Product Product { get; set; }
         
     }

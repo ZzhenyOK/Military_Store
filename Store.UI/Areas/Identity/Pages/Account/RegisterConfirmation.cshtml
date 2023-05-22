@@ -4,7 +4,17 @@
     ViewData["Title"] = "Register confirmation";
 }
 
-<h1>@ViewData["Title"]</h1>
+<style>
+    body {
+        background-image: url('/images/Background2.jpg');
+        margin: 0;
+        background-size: 100%;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+</style>
+
+<h1 class="text-light">@ViewData["Title"]</h>
 @{
     if (@Model.DisplayConfirmAccountLink)
     {

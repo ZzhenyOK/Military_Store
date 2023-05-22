@@ -5,6 +5,16 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+<style>
+    body {
+        background-image: url('/images/Background2.jpg');
+        margin: 0;
+        background-size: 100%;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+</style>
+
 <p>
     <a asp-action="Create">Create New</a>
 </p>
@@ -12,9 +22,9 @@
 <div class="row">
     <div class="col-md-8 offset-md-2">
 
-        <table class="table">
+        <table class="table text-light">
             <thead>
-                <tr class="text-center">
+                <tr class="text-center text-light">
                     <th>@Html.DisplayNameFor(model => model.Title)</th>
                     <th>@Html.DisplayNameFor(model => model.Price)</th>
                     <th>@Html.DisplayNameFor(model => model.Rate)</th>

@@ -3,7 +3,6 @@ using Store.DAL.DataContext;
 using Store.BLL.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
-using Store.BLL.DTO;
 using Store.DAL.Models;
 using Microsoft.AspNetCore.Identity;
 using Identity.Models;

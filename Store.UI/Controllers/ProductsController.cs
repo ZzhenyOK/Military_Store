@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Store.BLL.Services;
 using Store.DAL.DataContext;
 using Store.DAL.Models;
 
@@ -15,40 +16,36 @@ namespace Store.UI.Controllers
     public class ProductsController : Controller
     {
         private readonly DbmilitaryContext _context;
+        private readonly IProductService _service;
 
-        public ProductsController(DbmilitaryContext context)
+        public ProductsController(DbmilitaryContext context, IProductService service)
         {
             _context = context;
+            _service = service;
         }
 
         // GET: Products
         public async Task<IActionResult> Index()
         {
-            var dbmilitaryContext = _context.Products;
-            return View(await dbmilitaryContext.ToListAsync());
+            var allProducts = await _service.GetAllAsync();
+            return View(allProducts);
         }
 
         // GET: Products/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null || _context.Products == null)
-            {
-                return NotFound();
-            }
+            var productDetails = await _service.GetByIdAsync(id);
+            if (productDetails == null) return View("NotFound");
 
-            var product = await _context.Products.FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return View(product);
+            //Переробити
+            ViewBag.Images = _context.ProductImages.Where(p => p.ProductId == id).ToList();
+            return View(productDetails);
         }
 
         [HttpGet]
         public IActionResult Create()
         {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id");
+            //ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id");
             return View();
         }
 
@@ -56,85 +53,49 @@ namespace Store.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,CategoryId,Title,Price,Rate,Desctiption")] Product product)
         {
-            //if (ModelState.IsValid)
-            //{
-                _context.Add(product);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            //}
-
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", product.CategoryId);
-            return View(product);
+            if (ModelState.IsValid)
+            {
+                return View(product);
+            }
+            await _service.AddAsync(product);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Products/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null || _context.Products == null)
-            {
-                return NotFound();
-            }
+            var productDetails = await _service.GetByIdAsync(id);
+            if (productDetails == null) return View("NotFound");
 
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", product.CategoryId);
-            return View(product);
-        }
+            return View(productDetails);
+        } 
 
         // POST: Products/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,CategoryId,Title,Price,Rate,Desctiption")] Product product)
         {
             if (id != product.Id)
             {
-                return NotFound();
+                return View("NotFound");
             }
 
-            //if (ModelState.IsValid)
-            //{
-                try
-                {
-                    _context.Update(product);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!ProductExists(product.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }                   
-                }
-                return RedirectToAction(nameof(Index));
-            //}
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", product.CategoryId);
-            return View(product);
+            if (ModelState.IsValid)
+            {
+                return View(product);
+            }
+
+            await _service.UpdateAsync(id, product);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Products/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int id)
         {
-            if (id == null || _context.Products == null)
-            {
-                return NotFound();
-            }
+            var productDetails = await _service.GetByIdAsync(id);
+            if (productDetails == null) return View("NotFound");
 
-            var product = await _context.Products.FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return View(product);
+            return View(productDetails);
         }
 
         // POST: Products/Delete/5
@@ -142,17 +103,10 @@ namespace Store.UI.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            if (_context.Products == null)
-            {
-                return Problem("Entity set 'DbmilitaryContext.Products'  is null.");
-            }
-            var product = await _context.Products.FindAsync(id);
-            if (product != null)
-            {
-                _context.Products.Remove(product);
-            }
-            
-            await _context.SaveChangesAsync();
+            var productDetails = await _service.GetByIdAsync(id);
+            if (productDetails == null) return View("NotFound");
+
+            await _service.DeleteAsync(id);
             return RedirectToAction(nameof(Index));
         }
 
@@ -160,33 +114,15 @@ namespace Store.UI.Controllers
         public async Task<IActionResult> AddImages()
         {
             ViewBag.Product = new SelectList(_context.Products, "Id", "Title");
-            return  View();
+            return View();
         }
-
 
         [HttpPost]
         public async Task<IActionResult> AddImages(ProductImages pimage, List<IFormFile> Image)
         {
             if (Image == null) return View();
-            List<ProductImages> list = new List<ProductImages>();
-            foreach(var item in Image)
-            {
-                using(MemoryStream ms = new MemoryStream())
-                {                
-                    item.CopyTo(ms);
-                    ms.Seek(0, SeekOrigin.Begin);
-                    ProductImages pi = new ProductImages { ProductId = pimage.ProductId, Image = ms.ToArray() };
-                    list.Add(pi);
-                }
-            }
-            await _context.ProductImages.AddRangeAsync(list);
-            await _context.SaveChangesAsync();
+            await _service.AddImagesAsync(pimage, Image);
             return RedirectToAction(nameof(Index));  
-        }
-
-        private bool ProductExists(int id)
-        {
-          return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
         }
     }
 }

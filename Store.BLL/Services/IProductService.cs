@@ -1,5 +1,5 @@
-﻿using Store.BLL.Base;
-using Store.BLL.DTO;
+﻿using Microsoft.AspNetCore.Http;
+using Store.BLL.Base;
 using Store.DAL.Models;
 using System;
 using System.Collections.Generic;
@@ -9,8 +9,8 @@ using System.Threading.Tasks;
 
 namespace Store.BLL.Services
 {
-    public interface IProductService : IEntityBaseRepository<ProductDTO>
+    public interface IProductService : IEntityBaseRepository<Product>
     {
-
+        Task AddImagesAsync(ProductImages pimage, List<IFormFile> Images);
     }
 }

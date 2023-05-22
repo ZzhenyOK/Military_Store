@@ -13,89 +13,59 @@ namespace Store.UI.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly DbmilitaryContext _context;
+        private readonly IProductService _service;
 
-        public HomeController(ILogger<HomeController> logger, DbmilitaryContext context)
+        public HomeController(IProductService service)
         {
-            _logger = logger;
-            _context = context;
+            _service = service;
         }
 
         public async Task<IActionResult> Index()
         {
-            var dbmilitaryContext = _context.Products;
-            return View(await dbmilitaryContext.ToListAsync());
+            var allProducts = await _service.GetAllAsync();
+            return View(allProducts);
         }
 
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int id)
         {
-            if (id == null || _context.Products == null)
-            {
-                return NotFound();
-            }
+            var productDetails = await _service.GetByIdAsync(id);
+            if (productDetails == null) return View("NotFound");
 
-            var product = await _context.Products.FindAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", product.CategoryId);
-            return View(product);
-
+            return View(productDetails);
         }
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,CategoryId,Title,Price,Rate,Desctiption")] Product product)
         {
-            if (id != product.Id)
+            if (ModelState.IsValid)
             {
-                return NotFound();
+                return View(product);
             }
 
-            //if (ModelState.IsValid)
-            //{
-            try
-            {
-                _context.Update(product);
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductExists(product.Id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _service.UpdateAsync(id, product);
             return RedirectToAction(nameof(Index));
-            //}
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Id", product.CategoryId);
-            return View(product);
         }
 
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null || _context.Products == null)
-            {
-                return NotFound();
-            }
+            var productDetails = await _service.GetByIdAsync(id);
+            if (productDetails == null) return View("NotFound");
 
-            var product = await _context.Products.FirstOrDefaultAsync(m => m.Id == id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-
-            return View(product);
+            return View(productDetails);
         }
 
-        private bool ProductExists(int id)
+        public async Task<IActionResult> Filter(string searchString)
         {
-            return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
+            var allProducts = await _service.GetAllAsync();
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                var filteredResultNew = allProducts.Where(n => n.Title.ToLower().Contains(searchString.ToLower()) || n.Desctiption.ToLower().Contains(searchString.ToLower())).ToList();
+
+                return View("Index", filteredResultNew);
+            }
+            return View("Index", allProducts);
         }
     }
 }

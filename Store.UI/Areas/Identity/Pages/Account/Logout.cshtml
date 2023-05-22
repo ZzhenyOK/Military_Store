@@ -4,8 +4,18 @@
     ViewData["Title"] = "Log out";
 }
 
+<style>
+    body {
+        background-image: url('/images/Background2.jpg');
+        margin: 0;
+        background-size: 100%;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+</style>
+
 <header>
-    <h1>@ViewData["Title"]</h1>
+    <h1 class="text-light">@ViewData["Title"]</h1>
     @{
         if (User.Identity?.IsAuthenticated ?? false)
         {

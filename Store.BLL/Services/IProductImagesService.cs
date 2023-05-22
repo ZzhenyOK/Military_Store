@@ -1,5 +1,5 @@
 ﻿using Store.BLL.Base;
-using Store.BLL.DTO;
+using Store.DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Store.BLL.Services
 {
-    public interface IProductImagesService : IEntityBaseRepository<ProductImagesDTO>
+    public interface IProductImagesService : IEntityBaseRepository<ProductImages>
     {
     }
 }

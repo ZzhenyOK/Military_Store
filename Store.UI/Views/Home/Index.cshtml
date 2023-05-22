@@ -6,7 +6,29 @@
 }
 <link rel="stylesheet" type="text/css" href="~/css/site.css" />
 
-<form class="bg" style="background: url('@Url.Content("~/images/background.jpg")');">
+<header>
+    <div class="p-5 text-center bg-image"
+        style="
+            background-image: url('https://aoav.org.uk/wp-content/uploads/2016/03/impressive-machine-gun-header-011.jpg');
+            height: 400px;
+            100% 100% no-repeat;
+            background-size: cover;">
+        <div class="mask" style="background-color: rgba(0, 0, 0, 0.6);">
+            <div class="d-flex justify-content-center align-items-center h-100">
+                <div class="text-white">
+                    <h1 class="mb-3">Welcome To Our Shop</h1>
+                    <h4 class="mb-3">You can find everything you need here</h4>
+                    <a class="btn btn-outline-light btn-lg" href="#!" role="button">Info</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<form class="bg" style="background: url('@Url.Content("~/images/background2.jpg")');
+                        margin: 0;
+                        background-size: 100%;
+                        background-repeat: no-repeat;
+                        background-position: center;">
 <div class="row">
     @foreach (var item in Model)
     {
@@ -14,7 +36,7 @@
             <div class="card mb-3" style="max-width: 540px;">
                 <div class="row g-0" >
                     <div class="col-md-12" >
-                            <div class="card-header text-white bg-success">
+                            <div class="card-header text-white bg-dark">
                             <p class="card-text">
                                 <h5 class="card-title">
                                     @item.Title

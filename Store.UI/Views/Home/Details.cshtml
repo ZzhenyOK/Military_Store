@@ -5,12 +5,22 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Details</h1>
+<style>
+    body {
+        background-image: url('/images/Background2.jpg');
+        margin: 0;
+        background-size: 100%;
+        background-repeat: no-repeat;
+        background-position: center;
+    }
+</style>
+
+<h1 class="text-light">Details</h1>
 
 <div>
-    <h4>Product</h4>
+    <h4 class="text-light">Product</h4>
     <hr />
-    <dl class="row">
+    <dl class="row text-light">
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Title)
         </dt>
