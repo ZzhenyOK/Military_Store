@@ -8,9 +8,11 @@ using Microsoft.EntityFrameworkCore;
 using DocumentFormat.OpenXml.Office2010.Excel;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Store.BLL.Services;
+using Store.DAL.Static;
 
 namespace Store.UI.Controllers
 {
+    [Authorize(Roles = UserRoles.Admin)]
     public class HomeController : Controller
     {
         private readonly IProductService _service;
@@ -20,6 +22,7 @@ namespace Store.UI.Controllers
             _service = service;
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             var allProducts = await _service.GetAllAsync();
@@ -47,6 +50,7 @@ namespace Store.UI.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Details(int id)
         {
             var productDetails = await _service.GetByIdAsync(id);
@@ -55,6 +59,7 @@ namespace Store.UI.Controllers
             return View(productDetails);
         }
 
+        [AllowAnonymous]
         public async Task<IActionResult> Filter(string searchString)
         {
             var allProducts = await _service.GetAllAsync();

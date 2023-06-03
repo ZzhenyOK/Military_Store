@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using StackExchange.Redis;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Cors.Infrastructure;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,17 +30,12 @@ builder.Services.AddScoped<IHistoryService, HistoryService>();
 builder.Services.AddScoped<IProductImagesService, ProductImagesService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
+
+//Authentication and authorization
+
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false)
-    .AddDefaultTokenProviders().AddRoles<IdentityRole<int>>()
-  .AddEntityFrameworkStores<DbmilitaryContext>();
-
-
-builder.Services.AddControllersWithViews();
-builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
-{
-    options.LoginPath = "/Login";
-});
-
+.AddDefaultTokenProviders().AddRoles<IdentityRole<int>>()
+.AddEntityFrameworkStores<DbmilitaryContext>();
 
 var app = builder.Build();
 
@@ -59,6 +55,9 @@ app.UseAuthentication();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+//Seed database
+AppDbInitializer.SeedUsersAndRolesAsync(app).GetAwaiter().GetResult();
 
 app.MapRazorPages();
 

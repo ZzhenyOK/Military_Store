@@ -53,17 +53,6 @@ public partial class DbmilitaryContext : IdentityDbContext<ApplicationUser, Iden
         OnModelCreatingPartial(modelBuilder);
 
         base.OnModelCreating(modelBuilder);
-        SeedRoles(modelBuilder);
-    }
-
-
-    private static void SeedRoles(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<IdentityRole>().HasData
-            (
-                new IdentityRole() { Name = "Admin", ConcurrencyStamp = "1", NormalizedName = "Admin"},
-                new IdentityRole() { Name = "User", ConcurrencyStamp = "2", NormalizedName = "User"}
-            );
     }
 
     partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

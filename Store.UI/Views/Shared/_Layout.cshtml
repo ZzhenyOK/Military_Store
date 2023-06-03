@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="~/Store.UI.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <link rel="stylesheet" type="text/css" href="~/css/site.css" />
+    <link rel="stylesheet" type="text/css" href="~/css/menu.css" />
+    <link href="@Url.Content("~/css/back.css")" rel="stylesheet" type="text/css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
@@ -16,6 +18,22 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
             <div class="container-fluid">
+                
+                <div class="hamburger-menu navbar-brand navbar-collapse collapse">
+                    <input id="menu__toggle" type="checkbox" />
+                    <label class="menu__btn" for="menu__toggle">
+                        <span></span>
+                    </label>
+
+                    <ul class="menu__box">
+                        <li><a class="menu__item navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li><a class="menu__item navbar-brand" href="#">About</a></li>
+                        <li><a class="menu__item navbar-brand" href="#">Team</a></li>
+                        <li><a class="menu__item navbar-brand" href="#">Contact</a></li>
+                        <li><a class="menu__item navbar-brand" href="#">Categories</a></li>
+                    </ul>
+                </div>
+
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><i class='fa-solid fa-gun'></i> Military House</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
@@ -23,15 +41,20 @@
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item dropdown text-dark">
-                            <a href="#" class="nav-link dropdown-toggle text-light" data-bs-toggle="dropdown"><i class="bi bi-gear"></i> Management</a>
-                            <div class="dropdown-menu">
-                                <a  class="dropdown-item" asp-area="" asp-controller="Categories" asp-action="Index"> Categories</a>
-                                <a  class="dropdown-item" asp-area="" asp-controller="Products" asp-action="Index"> Products</a>
-                                <a  class="dropdown-item" asp-area="" asp-controller="Products" asp-action="AddImages"> AddImages</a>
-                                <a  class="dropdown-item" asp-area="" asp-controller="Home" asp-action="Index"> Weapons</a>
-                            </div>
-                        </li>
+
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item dropdown text-dark">
+                                <a href="#" class="nav-link dropdown-toggle text-light" data-bs-toggle="dropdown"><i class="bi bi-gear"></i> Management</a>
+                                <div class="dropdown-menu">
+                                    <a  class="dropdown-item" asp-area="" asp-controller="Categories" asp-action="Index"> Categories</a>
+                                    <a  class="dropdown-item" asp-area="" asp-controller="Products" asp-action="Index"> Products</a>
+                                    <a  class="dropdown-item" asp-area="" asp-controller="Products" asp-action="AddImages"> AddImages</a>
+                                    <a  class="dropdown-item" asp-area="" asp-controller="Home" asp-action="Index"> Weapons</a>
+                                </div>
+                            </li>
+                        }
+
                     </ul>
                     <form class="btn-group form-inline my-2 my-lg-0" asp-controller="Home" asp-action="Filter" style="padding-right: 25px;">
                         <input name="searchString" type="text" class="form-control" placeholder="Search for a weapen..." aria-label="Recipient's username" aria-describedby="button-addon2">
@@ -40,25 +63,9 @@
                         </span>
                     </form>
                 </div>
-                <partial name="_LoginPartial"></partial>
+                <partial name="_Identity.cshtml"/>
             </div>
         </nav>
-        @*<div class="p-5 text-center bg-image"
-             style="
-            background-image: url('https://aoav.org.uk/wp-content/uploads/2016/03/impressive-machine-gun-header-011.jpg');
-            height: 400px;
-            100% 100% no-repeat;
-            background-size: cover;">
-            <div class="mask" style="background-color: rgba(0, 0, 0, 0.6);">
-                <div class="d-flex justify-content-center align-items-center h-100">
-                    <div class="text-white">
-                        <h1 class="mb-3">Welcome To Our Shop</h1>
-                        <h4 class="mb-3">You can find everything you need here</h4>
-                        <a class="btn btn-outline-light btn-lg" href="#!" role="button">See Products</a>
-                    </div>
-                </div>
-            </div>
-        </div>*@
     </header>
     <div class="container-fluid navbar-dark bg-dark">
         <main role="main" class="pb-3">

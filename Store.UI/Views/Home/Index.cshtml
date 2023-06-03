@@ -4,7 +4,10 @@
     ViewData["Title"] = "Home Page";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+
 <link rel="stylesheet" type="text/css" href="~/css/site.css" />
+<link rel="stylesheet" type="text/css" href="~/css/back.css" />
+<link rel="stylesheet" type="text/css" href="~/css/menu.css" />
 
 <header>
     <div class="p-5 text-center bg-image"
@@ -18,17 +21,42 @@
                 <div class="text-white">
                     <h1 class="mb-3">Welcome To Our Shop</h1>
                     <h4 class="mb-3">You can find everything you need here</h4>
-                    <a class="btn btn-outline-light btn-lg" href="#!" role="button">Info</a>
+
+                    <div class="container">
+                        <a class="btn btn-outline-light btn-lg" id="open-modal-btn" href="#!" role="button">Info</a>
+                    </div>
+                    <div class="modal" id="my-modal">
+                        <div class="modal__box">
+                            <button class="modal__close-btn" id="close-my-modal-btn">
+                                <svg width="23" height="25" viewBox="0 0 23 25" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2.09082 0.03125L22.9999 22.0294L20.909 24.2292L-8.73579e-05 2.23106L2.09082 0.03125Z"
+                                          fill="#333333" />
+                                    <path d="M0 22.0295L20.9091 0.0314368L23 2.23125L2.09091 24.2294L0 22.0295Z" fill="#333333" />
+                                </svg>
+                            </button>
+                            <h2 class="text-black">Info</h2>
+                            <p class="text-black">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quasi, obcaecati, vero, illum ipsa libero labore facilis quo iste numquam deserunt totam reprehenderit quod.</p>
+                            <p class="text-black">
+                                Lorem, ipsum dolor sit amet consectetur adipisicing elit. Repudiandae impedit at, beatae consectetur asperiores maiores? Veniam impedit doloribus hic, dolorum odio totam rerum excepturi dolor! Veniam molestiae voluptas obcaecati non natus quae corporis,
+                                cum deleniti quo, cumque culpa exercitationem ex at numquam. Illo, voluptas itaque corporis amet consequuntur eius molestiae repudiandae rerum, sit id modi inventore. Ut, reiciendis laudantium neque nesciunt ex labore autem dolorum consequuntur
+                                accusantium molestias perspiciatis corporis illo sit, architecto fuga! Quo neque odio esse sapiente sit reprehenderit pariatur perspiciatis quisquam nulla, voluptas saepe itaque quia provident perferendis ducimus, alias atque aliquid cumque
+                                nihil laudantium recusandae suscipit!
+                            </p>
+                        </div>
+                    </div>
+                    <script defer src="js/info.js"></script>
                 </div>
             </div>
         </div>
     </div>
 </header>
+
 <form class="bg" style="background: url('@Url.Content("~/images/background2.jpg")');
                         margin: 0;
                         background-size: 100%;
                         background-repeat: no-repeat;
                         background-position: center;">
+
 <div class="row">
     @foreach (var item in Model)
     {
@@ -40,7 +68,10 @@
                             <p class="card-text">
                                 <h5 class="card-title">
                                     @item.Title
-                                    <a class="text-white float-right" asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square"></i></a>
+                                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                                    {
+                                        <a class="text-white float-right" asp-action="Edit" asp-route-id="@item.Id"><i class="bi bi-pencil-square"></i></a>
+                                    }
                                 </h5>
                             </p>
                         </div>
@@ -63,10 +94,10 @@
                                 <a class="btn btn-outline-primary float-right" asp-action="Details" asp-route-id="@item.Id">
                                     <i class="bi bi-eye-fill"></i> Show Details
                                 </a>
-                                <a
-                               asp-controller="Orders"
-                               asp-action="AddItemToShoppingCart"
-                               asp-route-id="@item.Id">
+                                    <a class="btn btn-success text-white bg-dark"
+                                    asp-controller="Orders"
+                                    asp-action="AddItemToShoppingCart"
+                                    asp-route-id="@item.Id">
                                     <i class="bi bi-cart-plus"></i> Add to Cart (Price @item.Price.ToString("c"))
                                 </a>
                             </p>
